@@ -120,3 +120,4 @@ if __name__ == '__main__':
     import uvicorn
 
     uvicorn.run('main:app', host='localhost', port=5010, reload=True, workers=1)
+print(1)
