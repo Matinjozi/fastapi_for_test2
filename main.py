@@ -90,14 +90,23 @@ def jwt_verify(token: str):
 
 
 @app.get("/users/me")
-def check_me(user_id:str):
+def check_me(token:str):
     cursor = conn.cursor()
+    secret = "Ravipass"
+
+    header = {
+        "alg": "HS256",
+        "typ": "JWT"
+    }
+
+    decode_token = jwt.decode(token, secret, algorithms=['HS256'], headers=header)
+    if decode_token == token:
+        cursor.execute('''SELECT * FROM form_login where user_id = %s;''', decode_token["user_id"])
+        data = cursor.fetchone()
+        return data
 
 
-    
-    cursor.execute('''SELECT username, hashed_password FROM form_login where hashed_password = %s;''',  [user_id])
-    data = cursor.fetchone()
-    return data
+
 # @app.get("/Update")
 # def Update(hashed_password: str):
 #     cursor = conn.cursor()
@@ -119,5 +128,4 @@ def delete(username: str, lastname: str, Phone: str, ):
 if __name__ == '__main__':
     import uvicorn
 
-    uvicorn.run('main:app', host='localhost', port=5010, reload=True, workers=1)
-print(1)
+    uvicorn.run('main:app', host='localhost', port=5020, reload=True, workers=1)
